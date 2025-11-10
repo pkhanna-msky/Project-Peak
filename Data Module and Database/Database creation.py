@@ -3,6 +3,7 @@ import sqlite3
 def create_database():
     conn = sqlite3.connect("hrs_certifications.db")
     cursor = conn.cursor()
+# testing
 
     cursor.executescript("""
     CREATE TABLE IF NOT EXISTS Employee (
