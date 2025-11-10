@@ -1,0 +1,21 @@
+employee_id,first_name,last_name,email,hire_date,employment_status
+1,Alex,Smith,alex.smith@example.com,2021-04-13,Probation
+2,Jordan,Johnson,jordan.johnson@example.com,2020-11-09,Active
+3,Taylor,Brown,taylor.brown@example.com,2021-03-15,Active
+4,Morgan,Davis,morgan.davis@example.com,2019-05-18,Probation
+5,Riley,Miller,riley.miller@example.com,2019-01-24,Active
+6,Casey,Wilson,casey.wilson@example.com,2020-10-13,Active
+7,Sam,Moore,sam.moore@example.com,2024-11-25,Active
+8,Jamie,Taylor,jamie.taylor@example.com,2020-09-12,Probation
+9,Avery,Anderson,avery.anderson@example.com,2023-06-19,Active
+10,Drew,Thomas,drew.thomas@example.com,2018-07-30,On Leave
+11,Priya,Patel,priya.patel@example.com,2024-11-15,Active
+12,Omar,Garcia,omar.garcia@example.com,2020-02-27,Active
+13,Lena,Hernandez,lena.hernandez@example.com,2021-12-09,Active
+14,Noah,Clark,noah.clark@example.com,2019-02-25,Active
+15,Maya,Lewis,maya.lewis@example.com,2016-03-28,Active
+16,Ethan,Walker,ethan.walker@example.com,2016-03-04,Probation
+17,Sara,Hall,sara.hall@example.com,2022-08-30,Probation
+18,Liam,Young,liam.young@example.com,2021-09-11,Active
+19,Nina,Allen,nina.allen@example.com,2021-07-04,Active
+20,Raj,King,raj.king@example.com,2017-01-15,On Leave
