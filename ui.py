@@ -1,3 +1,5 @@
+# ui.py
+
 """
 This is the user interface for the Human Resources information system
 at We Build Stuff.
@@ -5,7 +7,7 @@ at We Build Stuff.
 
 import os
 import pandas as pd
-import Data_import  # helper module we’ll define below
+import read_data  # helper module we define in read_data.py
 
 
 # Global “in-memory” data store
@@ -24,72 +26,103 @@ def load_data():
 
     print("Reading data...")
 
+    # Your CSVs are in the same folder as this script
+    # This loads them into pandas DataFrames
     employees_df = pd.read_csv("employees.csv")
     certifications_df = pd.read_csv("certifications.csv")
-    needs_df = pd.read_csv("needs_certification.csv")
-    has_df = pd.read_csv("has_certification.csv")
+
+
+    # Use your actual filenames (plural)
+    needs_df = pd.read_csv("needs_certifications.csv")
+    has_df = pd.read_csv("has_certifications.csv")
 
     print("Data loaded successfully.\n")
 
 
+def load_data_if_needed():
+    """
+    Convenience helper: if the user forgot to pick option 1,
+    we silently load the data on first use.
+    """
+    global employees_df
+    if employees_df is None:
+        print("Data not loaded yet. Loading now...")
+        load_data()
+
+
 def view_employee_certifications():
+    global employees_df, certifications_df, has_df
+
     if employees_df is None or has_df is None or certifications_df is None:
-        print("⚠ Please load data first (option 1).\n")
+        print(" Please load data first (option 1).\n")
         return
 
-    emp_id = Data_import.get_integer("Enter employee ID: ", 1, 999999)
+    employee_id = read_data.get_integer("Enter employee ID: ", 1, 20)
 
-    emp_row = employees_df[employees_df["employee_id"] == emp_id]
-    if emp_row.empty:
+    employee_row = employees_df[employees_df["employee_id"] == employee_id]
+    if employee_row.empty:
         print("No employee found with that ID.\n")
         return
 
-    emp_name = emp_row.iloc[0]["first_name"] + " " + emp_row.iloc[0]["last_name"]
-    print(f"\nCertifications for {emp_name} (ID {emp_id}):")
+    employee_name = employee_row.iloc[0]["first_name"] + " " + employee_row.iloc[0]["last_name"]
+    print(f"\nCertifications for {employee_name} (ID {employee_id}):")
 
-    merged = has_df.merge(certifications_df,
-                          left_on="certification_id",
-                          right_on="certification_id",
-                          how="inner")
+    merged = has_df.merge(
+        certifications_df,
+        on="certification_id",
+        how="inner"
+    )
 
-    emp_certs = merged[merged["employee_id"] == emp_id]
+    employee_certs = merged[merged["employee_id"] == employee_id]
 
-    if emp_certs.empty:
+    if employee_certs.empty:
         print("  – No certifications on record.\n")
     else:
-        for _, row in emp_certs.iterrows():
-            print(f"  - {row['name']} (obtained {row['obtained_date']}, "
-                  f"expires {row['expiry_date']})")
+        for _, row in employee_certs.iterrows():
+            print(
+                f"  - {row['name']} (obtained {row['obtained_date']}, "
+                f"expires {row['expiry_date']})"
+            )
         print()
 
 
 def view_certifications_employee_has():
+    global has_df, certifications_df
+
     if has_df is None or certifications_df is None:
-        print("⚠ Please load data first (option 1).\n")
+        print(" Please load data first (option 1).\n")
         return
 
-    print("\nAll employee–certification records:")
-    merged = has_df.merge(certifications_df,
-                          on="certification_id",
-                          how="left")
+    print("\n All employee–certification records:")
+    merged = has_df.merge(
+        certifications_df,
+        on="certification_id",
+        how="left"
+    )
     print(merged.to_string(index=False))
     print()
 
 
 def view_certifications_employee_needs():
+    global needs_df, certifications_df
+
     if needs_df is None or certifications_df is None:
-        print(" Please load data first (option 1).\n")
+        print(" Please load data first (option 1). \n")
         return
 
-    print("\nEmployee certification needs:")
-    merged = needs_df.merge(certifications_df,
-                            on="certification_id",
-                            how="left")
+    print("\n Employee certification needs:")
+    merged = needs_df.merge(
+        certifications_df,
+        on="certification_id",
+        how="left"
+    )
     print(merged.to_string(index=False))
     print()
 
 
 def reminders_for_employee_certifications():
+    global has_df, certifications_df
+
     if has_df is None or certifications_df is None:
         print(" Please load data first (option 1).\n")
         return
@@ -127,14 +160,14 @@ def record_employee_has_certification():
         print(" Please load data first (option 1).\n")
         return
 
-    emp_id = Data_import.get_integer("Enter employee ID: ", 1, 999999)
-    cert_id = Data_import.get_integer("Enter certification ID: ", 1, 999999)
+    employee_id = read_data.get_integer("Enter employee ID: ", 1, 20)
+    certifications_id = read_data.get_integer("Enter certification ID: ", 1, 10)
     obtained = input("Enter obtained date (YYYY-MM-DD): ")
     expiry = input("Enter expiry date (YYYY-MM-DD): ")
 
     new_row = {
-        "employee_id": emp_id,
-        "certification_id": cert_id,
+        "employee_id": employee_id,
+        "certification_id": certifications_id,
         "obtained_date": obtained,
         "expiry_date": expiry,
     }
@@ -145,21 +178,23 @@ def record_employee_has_certification():
 
 def save_changes():
     # Save any changed dataframes back to disk
+    global employees_df, certifications_df, needs_df, has_df
+
     if employees_df is not None:
         employees_df.to_csv("employees.csv", index=False)
     if certifications_df is not None:
         certifications_df.to_csv("certifications.csv", index=False)
     if needs_df is not None:
-        needs_df.to_csv("needs_certification.csv", index=False)
+        needs_df.to_csv("needs_certifications.csv", index=False)
     if has_df is not None:
-        has_df.to_csv("has_certification.csv", index=False)
+        has_df.to_csv("has_certifications.csv", index=False)
 
     print("Changes saved back to CSV files.\n")
 
 
 def main():
     menu_text = """
-We Build Stuff FIS menu
+We Build Stuff HRIS menu
 =============================
 
 1. Read data
@@ -179,23 +214,28 @@ We Build Stuff FIS menu
     user_choice = 0
     while user_choice != 10:
         print(menu_text)
-        user_choice = Data_import.get_integer("Enter your choice ", 1, 10)
+        user_choice = read_data.get_integer("Enter your choice ", 1, 10)
 
         clear_screen()
 
         if user_choice == 1:
             load_data()
         elif user_choice == 2:
+            load_data_if_needed()
             view_employee_certifications()
         elif user_choice == 3:
+            load_data_if_needed()
             view_certifications_employee_has()
         elif user_choice == 4:
+            load_data_if_needed()
             view_certifications_employee_needs()
         elif user_choice == 5:
+            load_data_if_needed()
             reminders_for_employee_certifications()
         elif user_choice == 6:
             send_request_for_renewal()
         elif user_choice == 7:
+            load_data_if_needed()
             record_employee_has_certification()
         elif user_choice == 8:
             print("Option 8 not implemented yet.\n")
