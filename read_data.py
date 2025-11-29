@@ -9,7 +9,7 @@ def get_integer(prompt: str, min_val: int, max_val: int) -> int:
             value_str = input(prompt)
             value = int(value_str)
             if value < min_val or value > max_val:
-                print(f"Please enter a number between {1} and {10}.")
+                print(f"Please enter a number between {min_val} and {max_val}.")
                 continue
             return value
         except ValueError:
