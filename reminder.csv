@@ -1,3 +1,1 @@
-employee_id,certification_id,reminder_date
-8,2,2025-11-28
-8,10,2025-11-28
+employee_id,certification_id,reminder_date,sent_date
