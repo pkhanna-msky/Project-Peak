@@ -136,7 +136,7 @@ def view_employee_certifications():
     print(employees_df[cols].sort_values(by="employee_id").to_string(index=False))
     print()
 
-    emp_id = read_data.get_integer("Enter employee ID from the list above: ", 1, 999)
+    emp_id = read_data.get_integer("Enter employee ID from the list above: ", 1, 50)
 
     row = employees_df[employees_df["employee_id"] == emp_id]
     if row.empty:
